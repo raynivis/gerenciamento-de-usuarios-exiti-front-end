@@ -18,6 +18,18 @@ export interface UpdateUsuarioDTO {
      email: string;
 }
 
+export interface ImportUsuarioDTO {
+     nome: string;
+     email: string;
+     status?: string;
+     createdAt?: string;
+}
+
+export interface ImportUsuarioResult {
+     sucesso: ImportUsuarioDTO[];
+     erros: { usuario: ImportUsuarioDTO; erro: string }[];
+}
+
 export class UsuarioService {
      async getUsuarios(
           page: number = 0,
@@ -71,6 +83,20 @@ export class UsuarioService {
      async toggleUsuarioStatus(id: number): Promise<void> {
           try {
                await axios.patch(`${API_URL}/usuarios/${id}/status`);
+          } catch (error) {
+               throw error;
+          }
+     }
+
+     async importUsuarios(
+          usuarios: ImportUsuarioDTO[]
+     ): Promise<ImportUsuarioResult> {
+          try {
+               const response = await axios.post(
+                    `${API_URL}/usuarios/importacao`,
+                    usuarios
+               );
+               return response.data;
           } catch (error) {
                throw error;
           }

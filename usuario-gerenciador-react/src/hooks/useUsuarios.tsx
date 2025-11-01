@@ -10,6 +10,7 @@ import {
      type UsuarioFilters,
      type CreateUsuarioDTO,
      type UpdateUsuarioDTO,
+     type ImportUsuarioDTO,
 } from "../services/usuario.service";
 import type { Usuario, UsuarioResponse } from "../models/usuario.model";
 
@@ -31,6 +32,7 @@ interface UsuariosContextData {
      updateUsuario: (id: number, data: UpdateUsuarioDTO) => Promise<void>;
      deleteUsuario: (id: number) => Promise<void>;
      toggleUsuarioStatus: (id: number) => Promise<void>;
+     importUsuarios: (usuarios: ImportUsuarioDTO[]) => Promise<void>;
      setCurrentPage: (page: number) => void;
      setPageSize: (size: number) => void;
      setFilters: (filters: UsuarioFilters) => void;
@@ -118,6 +120,15 @@ export const UsuariosProvider = ({ children }: UsuariosProviderProps) => {
           [getUsuarios, currentPage, pageSize, filters]
      );
 
+     const importUsuarios = useCallback(
+          async (usuarios: ImportUsuarioDTO[]) => {
+               await service.importUsuarios(usuarios);
+               await getUsuarios(0, pageSize, filters);
+               setCurrentPage(0);
+          },
+          [getUsuarios, pageSize, filters]
+     );
+
      const clearFilters = useCallback(() => {
           setFilters({});
           setSearchInput("");
@@ -140,6 +151,7 @@ export const UsuariosProvider = ({ children }: UsuariosProviderProps) => {
                     updateUsuario,
                     deleteUsuario,
                     toggleUsuarioStatus,
+                    importUsuarios,
                     setCurrentPage,
                     setPageSize,
                     setFilters,

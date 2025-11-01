@@ -44,7 +44,6 @@ export const DefaultModal = ({
                onRequestClose={onRequestClose}
                className="bg-white rounded-lg shadow-2xl max-w-lg w-full mx-auto outline-none"
                overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-               closeTimeoutMS={200}
           >
                <div className="flex flex-col">
                     {title && (

@@ -7,9 +7,11 @@ import ContentUsuarios from "./components/ContentUsuarios";
 import PaginationUsuarios from "./components/PaginationUsuarios";
 import AddUsuarioModal from "./components/AddUsuarioModal";
 import DeleteUsuarioModal from "./components/DeleteUsuarioModal";
+import ImportUsuariosModal from "./components/ImportUsuariosModal";
 import type {
      CreateUsuarioDTO,
      UpdateUsuarioDTO,
+     ImportUsuarioDTO,
 } from "../../../services/usuario.service";
 import type { Usuario } from "../../../models/usuario.model";
 
@@ -28,6 +30,7 @@ function UsuarioList() {
           updateUsuario,
           deleteUsuario,
           toggleUsuarioStatus,
+          importUsuarios,
           setCurrentPage,
           setPageSize,
           setFilters,
@@ -37,6 +40,7 @@ function UsuarioList() {
 
      const [isAddModalOpen, setIsAddModalOpen] = useState(false);
      const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
      const [selectedUsuario, setSelectedUsuario] = useState<Usuario | null>(
           null
      );
@@ -142,9 +146,24 @@ function UsuarioList() {
           }
      };
 
+     const handleImportUsuarios = async (usuarios: ImportUsuarioDTO[]) => {
+          try {
+               await importUsuarios(usuarios);
+               showToast.success(
+                    `${usuarios.length} usuário(s) importado(s) com sucesso!`
+               );
+          } catch (error) {
+               showToast.error("Erro ao importar usuários. Tente novamente.");
+               throw error;
+          }
+     };
+
      return (
           <section className="w-full h-full flex flex-col">
-               <HeaderUsuarios onAddClick={() => setIsAddModalOpen(true)} />
+               <HeaderUsuarios
+                    onAddClick={() => setIsAddModalOpen(true)}
+                    onImportClick={() => setIsImportModalOpen(true)}
+               />
 
                <div className="bg-white">
                     <FiltersUsuarios
@@ -199,6 +218,12 @@ function UsuarioList() {
                     onConfirm={handleDeleteUsuario}
                     usuarioNome={selectedUsuario?.nome || ""}
                     isDeleting={isDeleting}
+               />
+
+               <ImportUsuariosModal
+                    isOpen={isImportModalOpen}
+                    onClose={() => setIsImportModalOpen(false)}
+                    onImport={handleImportUsuarios}
                />
           </section>
      );

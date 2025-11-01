@@ -71,10 +71,10 @@ function ContentUsuarios({
                               </th>
 
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
-                                   Criado em
+                                   Data de Criação
                               </th>
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
-                                   Atualizado em
+                                   Data de Atualização
                               </th>
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
                                    Ações
