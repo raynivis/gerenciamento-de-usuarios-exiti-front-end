@@ -107,9 +107,10 @@ export const UsuariosProvider = ({ children }: UsuariosProviderProps) => {
      const deleteUsuario = useCallback(
           async (id: number) => {
                await service.deleteUsuario(id);
-               await getUsuarios(currentPage, pageSize, filters);
+               await getUsuarios(0, pageSize, filters);
+               setCurrentPage(0);
           },
-          [getUsuarios, currentPage, pageSize, filters]
+          [getUsuarios, pageSize, filters]
      );
 
      const toggleUsuarioStatus = useCallback(
