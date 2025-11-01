@@ -51,22 +51,32 @@ function ImportUsuariosModal({
                          (row) => {
                               let createdAt: string | undefined;
                               if (row["Data De Criação"]) {
-                                   const dateStr = String(
-                                        row["Data De Criação"]
-                                   ).trim();
-                                   const parts = dateStr.split("/");
-                                   if (
-                                        parts.length === 3 &&
-                                        parts[0].length <= 2 &&
-                                        parts[1].length <= 2 &&
-                                        parts[2].length === 4
-                                   ) {
-                                        createdAt = `${
-                                             parts[2]
-                                        }-${parts[1].padStart(
-                                             2,
-                                             "0"
-                                        )}-${parts[0].padStart(2, "0")}`;
+                                   const dateValue = row["Data De Criação"];
+                                   if (typeof dateValue === "number") {
+                                        const excelDate =
+                                             XLSX.SSF.parse_date_code(
+                                                  dateValue
+                                             );
+                                        createdAt = `${excelDate.y}-${String(
+                                             excelDate.m
+                                        ).padStart(2, "0")}-${String(
+                                             excelDate.d
+                                        ).padStart(2, "0")}`;
+                                   } else {
+                                        const dateStr =
+                                             String(dateValue).trim();
+                                        const parts = dateStr.split("/");
+                                        if (
+                                             parts.length === 3 &&
+                                             parts[2].length === 4
+                                        ) {
+                                             createdAt = `${
+                                                  parts[2]
+                                             }-${parts[1].padStart(
+                                                  2,
+                                                  "0"
+                                             )}-${parts[0].padStart(2, "0")}`;
+                                        }
                                    }
                               }
 
