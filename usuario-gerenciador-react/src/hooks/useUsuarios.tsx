@@ -8,6 +8,8 @@ import {
 import {
      UsuarioService,
      type UsuarioFilters,
+     type CreateUsuarioDTO,
+     type UpdateUsuarioDTO,
 } from "../services/usuario.service";
 import type { Usuario, UsuarioResponse } from "../models/usuario.model";
 
@@ -25,6 +27,10 @@ interface UsuariosContextData {
           size?: number,
           filters?: UsuarioFilters
      ) => Promise<void>;
+     createUsuario: (data: CreateUsuarioDTO) => Promise<void>;
+     updateUsuario: (id: number, data: UpdateUsuarioDTO) => Promise<void>;
+     deleteUsuario: (id: number) => Promise<void>;
+     toggleUsuarioStatus: (id: number) => Promise<void>;
      setCurrentPage: (page: number) => void;
      setPageSize: (size: number) => void;
      setFilters: (filters: UsuarioFilters) => void;
@@ -79,6 +85,39 @@ export const UsuariosProvider = ({ children }: UsuariosProviderProps) => {
           []
      );
 
+     const createUsuario = useCallback(
+          async (data: CreateUsuarioDTO) => {
+               await service.createUsuario(data);
+               await getUsuarios(0, pageSize, filters);
+               setCurrentPage(0);
+          },
+          [getUsuarios, pageSize, filters]
+     );
+
+     const updateUsuario = useCallback(
+          async (id: number, data: UpdateUsuarioDTO) => {
+               await service.updateUsuario(id, data);
+               await getUsuarios(currentPage, pageSize, filters);
+          },
+          [getUsuarios, currentPage, pageSize, filters]
+     );
+
+     const deleteUsuario = useCallback(
+          async (id: number) => {
+               await service.deleteUsuario(id);
+               await getUsuarios(currentPage, pageSize, filters);
+          },
+          [getUsuarios, currentPage, pageSize, filters]
+     );
+
+     const toggleUsuarioStatus = useCallback(
+          async (id: number) => {
+               await service.toggleUsuarioStatus(id);
+               await getUsuarios(currentPage, pageSize, filters);
+          },
+          [getUsuarios, currentPage, pageSize, filters]
+     );
+
      const clearFilters = useCallback(() => {
           setFilters({});
           setSearchInput("");
@@ -97,6 +136,10 @@ export const UsuariosProvider = ({ children }: UsuariosProviderProps) => {
                     filters,
                     searchInput,
                     getUsuarios,
+                    createUsuario,
+                    updateUsuario,
+                    deleteUsuario,
+                    toggleUsuarioStatus,
                     setCurrentPage,
                     setPageSize,
                     setFilters,

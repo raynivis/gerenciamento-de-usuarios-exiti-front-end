@@ -20,7 +20,7 @@ function FiltersUsuarios({
      return (
           <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
                <div className="flex items-center gap-3">
-                    <div className="relative flex-1 max-w-xs">
+                    <div className="relative max-w-xs">
                          <FiSearch
                               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                               size={16}

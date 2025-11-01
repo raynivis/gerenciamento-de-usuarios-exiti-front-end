@@ -8,6 +8,16 @@ export interface UsuarioFilters {
      status?: string;
 }
 
+export interface CreateUsuarioDTO {
+     nome: string;
+     email: string;
+}
+
+export interface UpdateUsuarioDTO {
+     nome: string;
+     email: string;
+}
+
 export class UsuarioService {
      async getUsuarios(
           page: number = 0,
@@ -29,6 +39,38 @@ export class UsuarioService {
                     params,
                });
                return response.data;
+          } catch (error) {
+               throw error;
+          }
+     }
+
+     async createUsuario(data: CreateUsuarioDTO): Promise<void> {
+          try {
+               await axios.post(`${API_URL}/usuarios`, data);
+          } catch (error) {
+               throw error;
+          }
+     }
+
+     async updateUsuario(id: number, data: UpdateUsuarioDTO): Promise<void> {
+          try {
+               await axios.put(`${API_URL}/usuarios/${id}`, data);
+          } catch (error) {
+               throw error;
+          }
+     }
+
+     async deleteUsuario(id: number): Promise<void> {
+          try {
+               await axios.delete(`${API_URL}/usuarios/${id}`);
+          } catch (error) {
+               throw error;
+          }
+     }
+
+     async toggleUsuarioStatus(id: number): Promise<void> {
+          try {
+               await axios.patch(`${API_URL}/usuarios/${id}/status`);
           } catch (error) {
                throw error;
           }

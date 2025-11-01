@@ -1,9 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUsuarios } from "../../../hooks/useUsuarios";
+import { showToast } from "../../../components/toast";
 import HeaderUsuarios from "./components/HeaderUsuarios";
 import FiltersUsuarios from "./components/FiltersUsuarios";
 import ContentUsuarios from "./components/ContentUsuarios";
 import PaginationUsuarios from "./components/PaginationUsuarios";
+import AddUsuarioModal from "./components/AddUsuarioModal";
+import DeleteUsuarioModal from "./components/DeleteUsuarioModal";
+import type {
+     CreateUsuarioDTO,
+     UpdateUsuarioDTO,
+} from "../../../services/usuario.service";
+import type { Usuario } from "../../../models/usuario.model";
 
 function UsuarioList() {
      const {
@@ -16,12 +24,23 @@ function UsuarioList() {
           filters,
           searchInput,
           getUsuarios,
+          createUsuario,
+          updateUsuario,
+          deleteUsuario,
+          toggleUsuarioStatus,
           setCurrentPage,
           setPageSize,
           setFilters,
           setSearchInput,
           clearFilters,
      } = useUsuarios();
+
+     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+     const [selectedUsuario, setSelectedUsuario] = useState<Usuario | null>(
+          null
+     );
+     const [isDeleting, setIsDeleting] = useState(false);
 
      useEffect(() => {
           const timer = setTimeout(() => {
@@ -60,9 +79,72 @@ function UsuarioList() {
           setCurrentPage(0);
      };
 
+     const handleAddUsuario = async (data: CreateUsuarioDTO) => {
+          try {
+               await createUsuario(data);
+               showToast.success("Usuário adicionado com sucesso!");
+          } catch (error) {
+               showToast.error("Erro ao adicionar usuário. Tente novamente.");
+               throw error;
+          }
+     };
+
+     const handleEditUsuario = (usuario: Usuario) => {
+          setSelectedUsuario(usuario);
+          setIsAddModalOpen(true);
+     };
+
+     const handleUpdateUsuario = async (data: UpdateUsuarioDTO) => {
+          if (!selectedUsuario) return;
+
+          try {
+               await updateUsuario(selectedUsuario.id, data);
+               showToast.success("Usuário atualizado com sucesso!");
+               setSelectedUsuario(null);
+          } catch (error) {
+               showToast.error("Erro ao atualizar usuário. Tente novamente.");
+               throw error;
+          }
+     };
+
+     const handleDeleteClick = (usuario: Usuario) => {
+          setSelectedUsuario(usuario);
+          setIsDeleteModalOpen(true);
+     };
+
+     const handleDeleteUsuario = async () => {
+          if (!selectedUsuario) return;
+
+          setIsDeleting(true);
+          try {
+               await deleteUsuario(selectedUsuario.id);
+               showToast.success("Usuário excluído com sucesso!");
+               setSelectedUsuario(null);
+          } catch (error) {
+               showToast.error("Erro ao excluir usuário. Tente novamente.");
+               throw error;
+          } finally {
+               setIsDeleting(false);
+          }
+     };
+
+     const handleCloseModal = () => {
+          setIsAddModalOpen(false);
+          setSelectedUsuario(null);
+     };
+
+     const handleToggleStatus = async (id: number) => {
+          try {
+               await toggleUsuarioStatus(id);
+               showToast.success("Status atualizado com sucesso!");
+          } catch (error) {
+               showToast.error("Erro ao atualizar status. Tente novamente.");
+          }
+     };
+
      return (
           <section className="w-full h-full flex flex-col">
-               <HeaderUsuarios />
+               <HeaderUsuarios onAddClick={() => setIsAddModalOpen(true)} />
 
                <div className="bg-white">
                     <FiltersUsuarios
@@ -79,6 +161,9 @@ function UsuarioList() {
                     loading={usuariosLoading}
                     error={error}
                     usuarios={usuarios}
+                    onEdit={handleEditUsuario}
+                    onDelete={handleDeleteClick}
+                    onToggleStatus={handleToggleStatus}
                />
 
                {pageInfo &&
@@ -93,6 +178,28 @@ function UsuarioList() {
                               onPageSizeChange={handlePageSizeChange}
                          />
                     )}
+
+               <AddUsuarioModal
+                    isOpen={isAddModalOpen}
+                    onClose={handleCloseModal}
+                    onSubmit={
+                         selectedUsuario
+                              ? handleUpdateUsuario
+                              : handleAddUsuario
+                    }
+                    usuario={selectedUsuario || undefined}
+               />
+
+               <DeleteUsuarioModal
+                    isOpen={isDeleteModalOpen}
+                    onClose={() => {
+                         setIsDeleteModalOpen(false);
+                         setSelectedUsuario(null);
+                    }}
+                    onConfirm={handleDeleteUsuario}
+                    usuarioNome={selectedUsuario?.nome || ""}
+                    isDeleting={isDeleting}
+               />
           </section>
      );
 }

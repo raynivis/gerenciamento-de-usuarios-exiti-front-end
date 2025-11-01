@@ -1,12 +1,25 @@
+import { FaUserMinus, FaUserPen } from "react-icons/fa6";
+import Switch from "react-switch";
+
 import type { Usuario } from "../../../../models/usuario.model";
 
 interface ContentUsuariosProps {
      loading: boolean;
      error: string;
      usuarios: Usuario[];
+     onEdit: (usuario: Usuario) => void;
+     onDelete: (usuario: Usuario) => void;
+     onToggleStatus: (id: number) => void;
 }
 
-function ContentUsuarios({ loading, error, usuarios }: ContentUsuariosProps) {
+function ContentUsuarios({
+     loading,
+     error,
+     usuarios,
+     onEdit,
+     onDelete,
+     onToggleStatus,
+}: ContentUsuariosProps) {
      if (loading) {
           return (
                <div className="flex justify-center items-center flex-1 bg-white">
@@ -48,19 +61,23 @@ function ContentUsuarios({ loading, error, usuarios }: ContentUsuariosProps) {
                     <thead className="bg-gray-100 border-b border-gray-200">
                          <tr>
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
+                                   Status
+                              </th>
+                              <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
                                    Nome
                               </th>
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
                                    E-mail
                               </th>
-                              <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
-                                   Situação
-                              </th>
+
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
                                    Criado em
                               </th>
                               <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
                                    Atualizado em
+                              </th>
+                              <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
+                                   Ações
                               </th>
                          </tr>
                     </thead>
@@ -70,17 +87,38 @@ function ContentUsuarios({ loading, error, usuarios }: ContentUsuariosProps) {
                                    key={usuario.id}
                                    className="hover:bg-gray-50 transition-colors"
                               >
+                                   <td className="px-4 py-3">
+                                        <div className="flex items-center gap-2">
+                                             <Switch
+                                                  checked={
+                                                       usuario.status ===
+                                                       "Ativo"
+                                                  }
+                                                  onChange={() =>
+                                                       onToggleStatus(
+                                                            usuario.id
+                                                       )
+                                                  }
+                                                  onColor="#368467"
+                                                  offColor="#ef4444"
+                                                  handleDiameter={16}
+                                                  uncheckedIcon={false}
+                                                  checkedIcon={false}
+                                                  height={20}
+                                                  width={40}
+                                             />
+                                             <span className="text-xs text-gray-600">
+                                                  {usuario.status}
+                                             </span>
+                                        </div>
+                                   </td>
                                    <td className="px-4 py-3 text-sm text-gray-900">
                                         {usuario.nome}
                                    </td>
                                    <td className="px-4 py-3 text-sm text-gray-600">
                                         {usuario.email}
                                    </td>
-                                   <td className="px-4 py-3">
-                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium">
-                                             {usuario.status.toUpperCase()}
-                                        </span>
-                                   </td>
+
                                    <td className="px-4 py-3 text-sm text-gray-600">
                                         {new Date(
                                              usuario.createdAt
@@ -90,6 +128,28 @@ function ContentUsuarios({ loading, error, usuarios }: ContentUsuariosProps) {
                                         {new Date(
                                              usuario.updatedAt
                                         ).toLocaleDateString("pt-BR")}
+                                   </td>
+                                   <td className="px-4 py-3">
+                                        <div className="flex items-center gap-2">
+                                             <button
+                                                  onClick={() =>
+                                                       onEdit(usuario)
+                                                  }
+                                                  className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                                  title="Editar usuário"
+                                             >
+                                                  <FaUserPen className="w-5 h-5" />
+                                             </button>
+                                             <button
+                                                  onClick={() =>
+                                                       onDelete(usuario)
+                                                  }
+                                                  className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                                                  title="Excluir usuário"
+                                             >
+                                                  <FaUserMinus className="w-5 h-5" />
+                                             </button>
+                                        </div>
                                    </td>
                               </tr>
                          ))}
