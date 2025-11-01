@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUsuarios } from "../../../hooks/useUsuarios";
 import { showToast } from "../../../components/toast";
+import { getErrorMessage } from "../../../utils/errorHandler";
 import HeaderUsuarios from "./components/HeaderUsuarios";
 import FiltersUsuarios from "./components/FiltersUsuarios";
 import ContentUsuarios from "./components/ContentUsuarios";
@@ -88,7 +89,11 @@ function UsuarioList() {
                await createUsuario(data);
                showToast.success("Usuário adicionado com sucesso!");
           } catch (error) {
-               showToast.error("Erro ao adicionar usuário. Tente novamente.");
+               const errorMessage = getErrorMessage(
+                    error,
+                    "Erro ao adicionar usuário. Tente novamente."
+               );
+               showToast.error(errorMessage);
                throw error;
           }
      };
@@ -106,7 +111,11 @@ function UsuarioList() {
                showToast.success("Usuário atualizado com sucesso!");
                setSelectedUsuario(null);
           } catch (error) {
-               showToast.error("Erro ao atualizar usuário. Tente novamente.");
+               const errorMessage = getErrorMessage(
+                    error,
+                    "Erro ao atualizar usuário. Tente novamente."
+               );
+               showToast.error(errorMessage);
                throw error;
           }
      };
@@ -125,7 +134,11 @@ function UsuarioList() {
                showToast.success("Usuário excluído com sucesso!");
                setSelectedUsuario(null);
           } catch (error) {
-               showToast.error("Erro ao excluir usuário. Tente novamente.");
+               const errorMessage = getErrorMessage(
+                    error,
+                    "Erro ao excluir usuário. Tente novamente."
+               );
+               showToast.error(errorMessage);
                throw error;
           } finally {
                setIsDeleting(false);
@@ -142,7 +155,11 @@ function UsuarioList() {
                await toggleUsuarioStatus(id);
                showToast.success("Status atualizado com sucesso!");
           } catch (error) {
-               showToast.error("Erro ao atualizar status. Tente novamente.");
+               const errorMessage = getErrorMessage(
+                    error,
+                    "Erro ao atualizar status. Tente novamente."
+               );
+               showToast.error(errorMessage);
           }
      };
 
@@ -153,7 +170,11 @@ function UsuarioList() {
                     `${usuarios.length} usuário(s) importado(s) com sucesso!`
                );
           } catch (error) {
-               showToast.error("Erro ao importar usuários. Tente novamente.");
+               const errorMessage = getErrorMessage(
+                    error,
+                    "Erro ao importar usuários. Tente novamente."
+               );
+               showToast.error(errorMessage);
                throw error;
           }
      };
